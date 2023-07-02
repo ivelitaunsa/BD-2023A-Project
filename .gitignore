@@ -1,0 +1,5 @@
+# Ignorar archivos binarios
+bin/**
+
+# Ignorar config.properties
+src/config.properties
