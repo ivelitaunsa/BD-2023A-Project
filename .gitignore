@@ -5,3 +5,4 @@ bin/**
 
 # Ignorar config.properties
 src/config.properties
+/bin/
