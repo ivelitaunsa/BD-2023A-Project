@@ -28,7 +28,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
     public GZZ_DIA() {
         getRootPane().setWindowDecorationStyle(JRootPane.PLAIN_DIALOG);
         initComponents();
-        llenarTablaCargo();
+        llenarTablaDia();
     }
 
     private void initComponents() {
@@ -47,7 +47,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaCargo = new javax.swing.JTable();
+        tablaDia = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         btnAdicionar = new javax.swing.JButton();
@@ -60,11 +60,11 @@ public class GZZ_DIA extends javax.swing.JFrame {
         btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("Tabla Cargo");
+        setTitle("Tabla Dia");
         setUndecorated(true);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("CARGO");
+        jLabel1.setText("Dia");
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -127,7 +127,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
         );
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setText("Registro de Cargo");
+        jLabel2.setText("Registro de Dia");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -155,7 +155,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(229, 229, 229));
 
-        tablaCargo.setModel(new javax.swing.table.DefaultTableModel(
+        tablaDia.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -163,8 +163,8 @@ public class GZZ_DIA extends javax.swing.JFrame {
 
             }
         ));
-        tablaCargo.setShowHorizontalLines(true);
-        jScrollPane1.setViewportView(tablaCargo);
+        tablaDia.setShowHorizontalLines(true);
+        jScrollPane1.setViewportView(tablaDia);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -184,7 +184,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
         );
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel6.setText("Tabla_Cargo");
+        jLabel6.setText("Tabla_Dia");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -416,18 +416,18 @@ public class GZZ_DIA extends javax.swing.JFrame {
                 PreparedStatement stmt;
                 switch(comandoActivo) {      
                     case 1 -> { 
-                        stmt = conn.prepareStatement("INSERT INTO GZZ_CARGO (CarCod, CarDes, EstRegCod) VALUES (?, ?, ?)");
+                        stmt = conn.prepareStatement("INSERT INTO GZZ_DIA (DiaNum, DiaDes, EstRegCod) VALUES (?, ?, ?)");
                         stmt.setString(1, codigo);
                         stmt.setString(2, descripcion);
                         stmt.setString(3, estadoRegistro);
                     }
                     case 2 -> { 
-                        stmt = conn.prepareStatement("UPDATE GZZ_CARGO SET CarDes = ? WHERE CarCod = ?");
+                        stmt = conn.prepareStatement("UPDATE GZZ_DIA SET DiaDes = ? WHERE DiaNum = ?");
                         stmt.setString(1, descripcion);
                         stmt.setString(2, codigo);
                     }
                     default -> {
-                        stmt = conn.prepareStatement("UPDATE GZZ_CARGO SET EstRegCod = ? WHERE CarCod = ?");
+                        stmt = conn.prepareStatement("UPDATE GZZ_DIA SET EstRegCod = ? WHERE DiaNum = ?");
                         stmt.setString(1, estadoRegistro);
                         stmt.setString(2, codigo);
                     }
@@ -439,7 +439,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
             }catch(SQLException e) {
                 System.out.println("Error: "+e);
             }
-            llenarTablaCargo();
+            llenarTablaDia();
             CarFlaAct = 0;
             desactivarFields();
             comandoActivo = 0;
@@ -450,7 +450,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        int filaSeleccionada = tablaCargo.getSelectedRow();
+        int filaSeleccionada = tablaDia.getSelectedRow();
         if(filaSeleccionada != -1) {
             comandoActivo = 2;    
             //Cambio de Flag
@@ -469,7 +469,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        int filaSeleccionada = tablaCargo.getSelectedRow();
+        int filaSeleccionada = tablaDia.getSelectedRow();
         btnActualizar.setEnabled(true);
         if(filaSeleccionada != -1) {
             comandoActivo = 3;    
@@ -482,7 +482,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnInactivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInactivarActionPerformed
-        int filaSeleccionada = tablaCargo.getSelectedRow();
+        int filaSeleccionada = tablaDia.getSelectedRow();
         btnActualizar.setEnabled(true);
         if(filaSeleccionada != -1) {
             comandoActivo = 4;    
@@ -534,18 +534,18 @@ public class GZZ_DIA extends javax.swing.JFrame {
         desField.setEditable(false);
         estRegField.setEditable(false);
     }
-    private void llenarTablaCargo() {        
+    private void llenarTablaDia() {        
         modelo.setColumnIdentifiers(new Object[]{"Codigo", "Descripcion", "Estado Registro"});
         modelo.setRowCount(0);
         try {
             //Consulta de selección
             Statement statement = conn.createStatement();
-            String consulta = "SELECT DiaCod, DiaDes, EstRegCod FROM GZZ_DIA";
+            String consulta = "SELECT DiaNum, DiaDes, EstRegCod FROM GZZ_DIA";
             ResultSet rs = statement.executeQuery(consulta);
             
             //Agregando los datos
             while(rs.next()) {
-                modelo.addRow(new Object[]{rs.getString("DiaCod"), rs.getString("DiaDes"), rs.getString("EstRegCod")});
+                modelo.addRow(new Object[]{rs.getString("DiaNum"), rs.getString("DiaDes"), rs.getString("EstRegCod")});
             }
             //Asigna Modelo a tabla
             tablaDia.setModel(modelo);
