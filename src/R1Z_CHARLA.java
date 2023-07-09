@@ -540,7 +540,7 @@ public class R1Z_CHARLA extends javax.swing.JFrame {
         try {
             //Consulta de selección
             Statement statement = conn.createStatement();
-            String consulta = "SELECT ChaNum, ChaTem, EstRegCod FROM R1Z_CHARLA";
+            String consulta = "SELECT ChaNum, ChaTem, EstRegCod FROM R1Z_CHARLA WHERE EstRegCod NOT IN ('*')";
             ResultSet rs = statement.executeQuery(consulta);
             
             //Agregando los datos

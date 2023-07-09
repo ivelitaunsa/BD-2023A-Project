@@ -540,7 +540,7 @@ public class GZZ_DIA extends javax.swing.JFrame {
         try {
             //Consulta de selección
             Statement statement = conn.createStatement();
-            String consulta = "SELECT DiaNum, DiaDes, EstRegCod FROM GZZ_DIA";
+            String consulta = "SELECT DiaNum, DiaDes, EstRegCod FROM GZZ_DIA WHERE EstRegCod NOT IN ('*')";
             ResultSet rs = statement.executeQuery(consulta);
             
             //Agregando los datos

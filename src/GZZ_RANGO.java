@@ -540,7 +540,7 @@ public class GZZ_RANGO extends javax.swing.JFrame {
         try {
             //Consulta de selección
             Statement statement = conn.createStatement();
-            String consulta = "SELECT RanCod, RanDes, EstRegCod FROM GZZ_RANGO ";
+            String consulta = "SELECT RanCod, RanDes, EstRegCod FROM GZZ_RANGO WHERE EstRegCod NOT IN ('*')";
             ResultSet rs = statement.executeQuery(consulta);
             
             //Agregando los datos

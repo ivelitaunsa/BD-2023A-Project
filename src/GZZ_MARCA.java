@@ -540,7 +540,7 @@ public class GZZ_MARCA extends javax.swing.JFrame {
         try {
             //Consulta de selección
             Statement statement = conn.createStatement();
-            String consulta = "SELECT MarCod, MarNom, EstRegCod FROM GZZ_MARCA";
+            String consulta = "SELECT MarCod, MarNom, EstRegCod FROM GZZ_MARCA WHERE EstRegCod NOT IN ('*')";
             ResultSet rs = statement.executeQuery(consulta);
             
             //Agregando los datos
