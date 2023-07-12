@@ -1,6 +1,3 @@
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,18 +7,10 @@ public class Conexion {
     public Conexion() {
         // com.mysql.jdbc.Driver -> Deprecated
         final String driver = "com.mysql.cj.jdbc.Driver";
-        
-        //Extrayendo keys de archivo .properties
-        Properties props=new Properties();
-        try(FileInputStream fis=new FileInputStream("./src/config.properties")){
-            props.load(fis);
-        }catch(IOException e){
-            System.out.println("Error" + e);
-        }
-        final String url = props.getProperty("db.url");
-        final String dbName = props.getProperty("db.name");
-        final String userName = props.getProperty("db.user");
-        final String password = props.getProperty("db.password");
+        final String url = "jdbc:mysql://localhost:3306/";
+        final String dbName = "BD_RRHH";
+        final String userName = "root";
+        final String password = "ifbva2002";
         
         try {
             Class.forName(driver);

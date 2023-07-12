@@ -1094,6 +1094,7 @@ public class R1T_ASISTENCIA_CAB extends javax.swing.JFrame {
             System.out.println("Error: "+e);
         }
     }
+
     // Variables declaration - do not modify                     
     private javax.swing.JButton btnActualizarCab;
     private javax.swing.JButton btnActualizarDet;
