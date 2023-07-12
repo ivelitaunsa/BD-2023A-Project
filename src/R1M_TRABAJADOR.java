@@ -6,7 +6,7 @@ import java.sql.Statement;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
-public class R1M_TRABAJADOR<dateChooser> extends javax.swing.JFrame {
+public class R1M_TRABAJADOR extends javax.swing.JFrame {
     //Flag para la actualización
     private static int CarFlaAct = 0;
     //Comando activo al clickear boton

@@ -574,7 +574,7 @@ public class GZM_EPP extends javax.swing.JFrame {
 
     private void verLongitudCod(){
         int longitud = codField.getText().length();
-        if(longitud > 2) {
+        if(longitud > 3) {
             advertenciaLabel.setText("*Demasiados Caracteres*");
             btnActualizar.setEnabled(false);
         } else {
