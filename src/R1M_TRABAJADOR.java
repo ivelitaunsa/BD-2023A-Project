@@ -4,9 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class R1M_TRABAJADOR<dateChooser> extends javax.swing.JFrame {
@@ -31,16 +28,6 @@ public class R1M_TRABAJADOR<dateChooser> extends javax.swing.JFrame {
         cargarComboDe("RanDes","GZZ_RANGO");
         cargarComboDe("CarDes","GZZ_CARGO");
         cargarComboDe("DepDes","GZZ_DEPARTAMENTO");
-        tablaCabecera.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                if(!e.getValueIsAdjusting()) {
-                    int fila = tablaCabecera.getSelectedRow();
-                    if(fila>=0) {
-                        String codigo = (String) tablaCabecera.getValueAt(fila, 0);
-                    }
-                }
-            }
-        });
     }
                       
     private void initComponents() {
@@ -463,39 +450,42 @@ public class R1M_TRABAJADOR<dateChooser> extends javax.swing.JFrame {
             String cargo = String.valueOf(comboCarg.getSelectedIndex()+1);
             String departamento = String.valueOf(comboDep.getSelectedIndex()+1);
             String estadoRegistro = estRegField.getText();
-            try {
-                PreparedStatement stmt;
-                switch(comandoActivo) {      
-                    case 1 -> { 
-                        stmt = conn.prepareStatement("INSERT INTO R1M_TRABAJADOR (TraCod,TraNom,TraDni,RanCod,CarCod,DepCod,EstRegCod) VALUES (?,?,?,?,?,?,?)");
-                        stmt.setString(1, codigo);
-                        stmt.setString(2, nombre);
-                        stmt.setString(3, DNI);
-                        stmt.setString(4, rango);
-                        stmt.setString(5, cargo);
-                        stmt.setString(6, departamento);
-                        stmt.setString(7, estadoRegistro);
-                        stmt.executeUpdate();
-                        //Agregando trabajadores al crear una charla
-                        
+
+            if(CarFlaAct==1){
+                try {
+                    PreparedStatement stmt;
+                    switch(comandoActivo) {      
+                        case 1 -> { 
+                            stmt = conn.prepareStatement("INSERT INTO R1M_TRABAJADOR (TraCod,TraNom,TraDni,RanCod,CarCod,DepCod,EstRegCod) VALUES (?,?,?,?,?,?,?)");
+                            stmt.setString(1, codigo);
+                            stmt.setString(2, nombre);
+                            stmt.setString(3, DNI);
+                            stmt.setString(4, rango);
+                            stmt.setString(5, cargo);
+                            stmt.setString(6, departamento);
+                            stmt.setString(7, estadoRegistro);
+                            stmt.executeUpdate();
+                            //Agregando trabajadores al crear una charla
+                            
+                        }
+                        default -> {
+                            stmt = conn.prepareStatement("UPDATE R1M_TRABAJADOR SET EstRegCod = ? WHERE AsiCabCod = ?");
+                            stmt.setString(1, estadoRegistro);
+                            stmt.setString(2,codigo);
+                            stmt.executeUpdate();
+                        }
                     }
-                    default -> {
-                        stmt = conn.prepareStatement("UPDATE R1M_TRABAJADOR SET EstRegCod = ? WHERE AsiCabCod = ?");
-                        stmt.setString(1, estadoRegistro);
-                        stmt.setString(2,codigo);
-                        stmt.executeUpdate();
-                    }
+                    
+                    
+                }catch(SQLException e) {
+                    System.out.println("Error: "+e);
                 }
-                
-                
-            }catch(SQLException e) {
-                System.out.println("Error: "+e);
+                llenarTablaCabecera();
+                CarFlaAct = 0;
+                desactivarFields();
+                comandoActivo = 0;
+                estRegField.setText("");
             }
-            llenarTablaCabecera();
-            CarFlaAct = 0;
-            desactivarFields();
-            comandoActivo = 0;
-            estRegField.setText("");
     }                                                
 
     private void btnCancelarCabActionPerformed(java.awt.event.ActionEvent evt) {                                               
@@ -601,12 +591,12 @@ public class R1M_TRABAJADOR<dateChooser> extends javax.swing.JFrame {
         try {
             //Consulta de selección
             Statement statement = conn.createStatement();
-            String consulta = "SELECT TraCod,TraCod,TraDni,RanCod,CarCod,DepCod,EstRegCod FROM R1M_TRABAJADOR WHERE EstRegCod NOT IN('*')";
+            String consulta = "SELECT TraCod,TraNom,TraDni,RanCod,CarCod,DepCod,EstRegCod FROM R1M_TRABAJADOR WHERE EstRegCod NOT IN('*')";
             ResultSet rs = statement.executeQuery(consulta);
             
             //Agregando los datos
             while(rs.next()) {
-                modelo.addRow(new Object[]{rs.getString("TraCod"),rs.getString("TraCod"),rs.getString("TraDni"),rs.getString("RanCod"),rs.getString("CarCod"),rs.getString("DepCod"),rs.getString("EstRegCod")});
+                modelo.addRow(new Object[]{rs.getString("TraCod"),rs.getString("TraNom"),rs.getString("TraDni"),rs.getString("RanCod"),rs.getString("CarCod"),rs.getString("DepCod"),rs.getString("EstRegCod")});
             }
             //Asigna Modelo a tabla
             tablaCabecera.setModel(modelo);
@@ -620,16 +610,16 @@ public class R1M_TRABAJADOR<dateChooser> extends javax.swing.JFrame {
         String codigo = (String) modelo.getValueAt(fila, 0);
         try {
             Statement statement = conn.createStatement();
-            String consulta = "SELECT * FROM R1M_TRABAJADOR WHERE AsiCabCod="+codigo;
+            String consulta = "SELECT * FROM R1M_TRABAJADOR WHERE TraCod="+codigo;
             ResultSet rs = statement.executeQuery(consulta);
             while(rs.next()) {
                 cabCodField.setText(codigo);
-                trabajadorField.setText((String) modelo.getValueAt(fila,2));
-                DNIField.setText((String) modelo.getValueAt(fila,3));
+                trabajadorField.setText((String) modelo.getValueAt(fila,1));
+                DNIField.setText((String) modelo.getValueAt(fila,2));
                 comboCarg.setSelectedIndex(Integer.parseInt((String) modelo.getValueAt(fila, 4))-1);
-                comboRang.setSelectedIndex(Integer.parseInt((String) modelo.getValueAt(fila, 5))-1);
-                comboDep.setSelectedIndex(Integer.parseInt((String) modelo.getValueAt(fila, 6))-1);
-                estRegField.setText((String) modelo.getValueAt(fila,7));
+                comboRang.setSelectedIndex(Integer.parseInt((String) modelo.getValueAt(fila, 3))-1);
+                comboDep.setSelectedIndex(Integer.parseInt((String) modelo.getValueAt(fila, 5))-1);
+                estRegField.setText((String) modelo.getValueAt(fila,6));
             }
         }catch(SQLException e) {
             System.out.println("Error: "+e);
