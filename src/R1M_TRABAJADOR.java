@@ -1,206 +1,676 @@
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.GridLayout;
-import javax.swing.JEditorPane;
-import java.awt.Color;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-import javax.swing.JLabel;
-import java.awt.Font;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JComboBox;
-import javax.swing.UIManager;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
-public class R1M_TRABAJADOR extends JFrame {
+public class R1M_TRABAJADOR<dateChooser> extends javax.swing.JFrame {
+    //Flag para la actualización
+    private static int CarFlaAct = 0;
+    //Comando activo al clickear boton
+    /*
+    1. Adicionar
+    2. Modificar
+    3. Eliminar
+    4. Inactivar
+    5. Reactivar */
+    private static int comandoActivo = 1; 
+    //Conexion con la DB
+    private Conexion conexion = new Conexion();
+    private Connection conn = conexion.conn;
+    
+    public R1M_TRABAJADOR() {
+        initComponents();
+        desactivarFields();
+        llenarTablaCabecera();
+        cargarComboDe("RanDes","GZZ_RANGO");
+        cargarComboDe("CarDes","GZZ_CARGO");
+        cargarComboDe("DepDes","GZZ_DEPARTAMENTO");
+        tablaCabecera.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if(!e.getValueIsAdjusting()) {
+                    int fila = tablaCabecera.getSelectedRow();
+                    if(fila>=0) {
+                        String codigo = (String) tablaCabecera.getValueAt(fila, 0);
+                    }
+                }
+            }
+        });
+    }
+                      
+    private void initComponents() {
 
-	private JPanel contentPane;
-	private JTextField Text_Codigo;
-	private JTextField Text_Nombre;
-	private JTextField Text_DNI;
-	private JTable table;
+        jPanel1 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        cabCodField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        trabajadorField = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        comboCarg = new javax.swing.JComboBox<>();
+        comboRang = new javax.swing.JComboBox<>();        
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        comboDep = new javax.swing.JComboBox<>();
+        estRegField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaCabecera = new javax.swing.JTable();
+        jLabel19 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        btnSalir = new javax.swing.JButton();
+        btnAdicionarCab = new javax.swing.JButton();
+        btnInactivarCab = new javax.swing.JButton();
+        btnModificarCab = new javax.swing.JButton();
+        btnReactivarCab = new javax.swing.JButton();
+        btnEliminarCab = new javax.swing.JButton();
+        btnActualizarCab = new javax.swing.JButton();
+        btnCancelarCab = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        DNIField = new javax.swing.JTextField();
+ 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
+        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					R1M_TRABAJADOR frame = new R1M_TRABAJADOR();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+        jPanel3.setBackground(new java.awt.Color(226, 226, 226));
 
-	public R1M_TRABAJADOR() {
-		setResizable(false);
-		setUndecorated(true);
-		setTitle("Registro Trabajador");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 828, 459);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jLabel3.setText("Codigo:");
 
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		table = new JTable();
-		table.setBounds(415, 43, 367, 218);
-		contentPane.add(table);
-		
-		JButton btnSalir = new JButton("Salir");
-		btnSalir.setBounds(707, 354, 89, 23);
-		contentPane.add(btnSalir);
-		
-		JButton btnActualizar = new JButton("Actualizar");
-		btnActualizar.setBounds(608, 354, 89, 23);
-		contentPane.add(btnActualizar);
-		
-		JButton btnReactivar = new JButton("Reactivar");
-		btnReactivar.setBounds(509, 354, 89, 23);
-		contentPane.add(btnReactivar);
-		
-		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.setBounds(707, 309, 89, 23);
-		contentPane.add(btnCancelar);
-		
-		JButton btnInactivar = new JButton("Inactivar");
-		btnInactivar.setBounds(410, 354, 89, 23);
-		contentPane.add(btnInactivar);
-		
-		JButton btnEliminar = new JButton("Eliminar");
-		btnEliminar.setBounds(608, 309, 89, 23);
-		contentPane.add(btnEliminar);
-		
-		JButton btnModificar = new JButton("Modificar");
-		btnModificar.setBounds(509, 309, 89, 23);
-		contentPane.add(btnModificar);
-		
-		JComboBox comboBox_4 = new JComboBox();
-		comboBox_4.setBounds(140, 259, 41, 22);
-		contentPane.add(comboBox_4);
-		
-		JComboBox comboGenero = new JComboBox();
-		comboGenero.setBounds(140, 228, 158, 22);
-		contentPane.add(comboGenero);
-		
-		JComboBox combo_Departamento = new JComboBox();
-		combo_Departamento.setBounds(140, 197, 158, 22);
-		contentPane.add(combo_Departamento);
-		
-		JComboBox comboCargo = new JComboBox();
-		comboCargo.setBounds(140, 166, 158, 22);
-		contentPane.add(comboCargo);
-		
-		JComboBox comboRango = new JComboBox();
-		comboRango.setBounds(140, 135, 158, 22);
-		contentPane.add(comboRango);
-		
-		JLabel lblGenero = new JLabel("Genero:");
-		lblGenero.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblGenero.setBounds(29, 228, 63, 20);
-		contentPane.add(lblGenero);
-		
-		Text_DNI = new JTextField();
-		Text_DNI.setBounds(140, 105, 158, 20);
-		contentPane.add(Text_DNI);
-		Text_DNI.setColumns(10);
-		
-		Text_Nombre = new JTextField();
-		Text_Nombre.setBounds(140, 74, 158, 20);
-		contentPane.add(Text_Nombre);
-		Text_Nombre.setColumns(10);
-		
-		Text_Codigo = new JTextField();
-		Text_Codigo.setBounds(140, 43, 158, 20);
-		contentPane.add(Text_Codigo);
-		Text_Codigo.setColumns(10);
-		
-		JLabel lblDepartamento = new JLabel("Departamento:");
-		lblDepartamento.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblDepartamento.setBounds(29, 197, 110, 20);
-		contentPane.add(lblDepartamento);
-		
-		JLabel lblRango = new JLabel("Rango");
-		lblRango.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblRango.setBounds(29, 135, 63, 20);
-		contentPane.add(lblRango);
-		
-		JButton btnAdicionar = new JButton("Adicionar");
-		btnAdicionar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnAdicionar.setBounds(410, 309, 89, 23);
-		contentPane.add(btnAdicionar);
-		
-		JLabel lblCargo = new JLabel("Cargo:");
-		lblCargo.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblCargo.setBounds(29, 166, 63, 20);
-		contentPane.add(lblCargo);
-		
-		JLabel lblEstado = new JLabel("Estado:");
-		lblEstado.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblEstado.setBounds(29, 259, 63, 20);
-		contentPane.add(lblEstado);
-		
-		JLabel lblDni = new JLabel("DNI:");
-		lblDni.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblDni.setBounds(29, 104, 63, 20);
-		contentPane.add(lblDni);
-		
-		JLabel lblNombre = new JLabel("Nombre:");
-		lblNombre.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblNombre.setBounds(29, 73, 63, 20);
-		contentPane.add(lblNombre);
-		
-		JLabel lblCodigo = new JLabel("Codigo:");
-		lblCodigo.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblCodigo.setBounds(29, 42, 63, 20);
-		contentPane.add(lblCodigo);
-		
-		JEditorPane editorPane = new JEditorPane();
-		editorPane.setBackground(new Color(240, 240, 240));
-		editorPane.setForeground(new Color(192, 192, 192));
-		editorPane.setBounds(16, 30, 362, 368);
-		contentPane.add(editorPane);
-		
-		JEditorPane comboEstado = new JEditorPane();
-		comboEstado.setFont(new Font("Arial", Font.PLAIN, 11));
-		comboEstado.setText("Registro de Trabajador Cabecera");
-		comboEstado.setBackground(new Color(192, 192, 192));
-		comboEstado.setBounds(10, 11, 379, 398);
-		contentPane.add(comboEstado);
-		
-		JEditorPane editorPane_2 = new JEditorPane();
-		editorPane_2.setForeground(Color.LIGHT_GRAY);
-		editorPane_2.setBackground(UIManager.getColor("Button.background"));
-		editorPane_2.setBounds(410, 30, 379, 239);
-		contentPane.add(editorPane_2);
-		
-		JEditorPane dtrpnTablaTrabajadorCabecera = new JEditorPane();
-		dtrpnTablaTrabajadorCabecera.setText("Tabla Trabajador Cabecera");
-		dtrpnTablaTrabajadorCabecera.setFont(new Font("Arial", Font.PLAIN, 11));
-		dtrpnTablaTrabajadorCabecera.setBackground(Color.LIGHT_GRAY);
-		dtrpnTablaTrabajadorCabecera.setBounds(399, 11, 403, 270);
-		contentPane.add(dtrpnTablaTrabajadorCabecera);
-		
-		JEditorPane dtrpnTablaTrabajadorCabecera_1 = new JEditorPane();
-		dtrpnTablaTrabajadorCabecera_1.setFont(new Font("Arial", Font.PLAIN, 11));
-		dtrpnTablaTrabajadorCabecera_1.setBackground(Color.LIGHT_GRAY);
-		dtrpnTablaTrabajadorCabecera_1.setBounds(399, 292, 403, 117);
-		contentPane.add(dtrpnTablaTrabajadorCabecera_1);
-	}
-	private static class __Tmp {
-		private static void __tmp() {
-			  javax.swing.JPanel __wbp_panel = new javax.swing.JPanel();
-		}
-	}
+        jLabel4.setText("Nombre:");
+
+        jLabel5.setText("DNI:");
+
+        jLabel6.setText("Rango:");
+
+        jLabel7.setText("Cargo:");
+
+        jLabel9.setText("Departamento:");
+
+        jLabel8.setText("Genero:");
+        
+        jLabel10.setText("Estado registro:");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel10))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(estRegField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboDep, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(trabajadorField, 0, 250, Short.MAX_VALUE)
+                        .addComponent(comboCarg, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cabCodField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboRang, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(DNIField, 0, 250, Short.MAX_VALUE)
+                .addContainerGap(39, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cabCodField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(trabajadorField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5))
+                .addComponent(DNIField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel6))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(comboRang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(comboCarg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(comboDep, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(estRegField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(61, Short.MAX_VALUE))
+        );
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setText("Registro de Trabajador");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel4.setBackground(new java.awt.Color(204, 204, 204));
+
+        jPanel5.setBackground(new java.awt.Color(226, 226, 226));
+
+        tablaCabecera.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane1.setViewportView(tablaCabecera);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel19.setText("Tabla_Trabajador");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel19)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jLabel19)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel6.setBackground(new java.awt.Color(204, 204, 204));
+
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
+            }
+        });
+
+        btnAdicionarCab.setText("Adicionar");
+        btnAdicionarCab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdicionarCabActionPerformed(evt);
+            }
+        });
+
+        btnInactivarCab.setText("Inactivar");
+        btnInactivarCab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInactivarCabActionPerformed(evt);
+            }
+        });
+
+        btnModificarCab.setText("Modificar");
+        btnModificarCab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarCabActionPerformed(evt);
+            }
+        });
+
+        btnReactivarCab.setText("Reactivar");
+        btnReactivarCab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReactivarCabActionPerformed(evt);
+            }
+        });
+
+        btnEliminarCab.setText("Eliminar");
+        btnEliminarCab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarCabActionPerformed(evt);
+            }
+        });
+
+        btnActualizarCab.setText("Actualizar");
+        btnActualizarCab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarCabActionPerformed(evt);
+            }
+        });
+
+        btnCancelarCab.setText("Cancelar");
+        btnCancelarCab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarCabActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(85, 85, 85)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(btnInactivarCab, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnReactivarCab, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(btnAdicionarCab, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnModificarCab, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnEliminarCab, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnActualizarCab, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnCancelarCab, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(85, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEliminarCab)
+                    .addComponent(btnCancelarCab)
+                    .addComponent(btnModificarCab)
+                    .addComponent(btnAdicionarCab))
+                .addGap(2, 2, 2)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnInactivarCab)
+                    .addComponent(btnReactivarCab)
+                    .addComponent(btnActualizarCab)
+                    .addComponent(btnSalir))
+                .addGap(30, 30, 30))
+        );
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel11.setText("Trabajador");
+
+ 
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel11)
+                            )
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+               
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        )
+)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>                        
+
+    private void btnAdicionarCabActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        activarFields();
+        cabCodField.setEditable(true);
+        estRegField.setEditable(false);
+        estRegField.setText("A");
+        //Flag Activada
+        CarFlaAct = 1;
+        //Reconociendo comando
+        comandoActivo = 1;
+    }                                               
+
+    private void btnInactivarCabActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        int filaSeleccionada = tablaCabecera.getSelectedRow();
+        btnActualizarCab.setEnabled(true);
+        if(filaSeleccionada != -1) {
+            comandoActivo = 4;    
+            //Cambio de Flag
+            CarFlaAct = 1;
+            cargarDatos(filaSeleccionada);
+            estRegField.setText("I");
+            desactivarFields();
+        }
+    }                                               
+
+    private void btnReactivarCabActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        int filaSeleccionada = tablaCabecera.getSelectedRow();
+        btnActualizarCab.setEnabled(true);
+        if(filaSeleccionada != -1) {
+            comandoActivo = 5;    
+            //Cambio de Flag
+            CarFlaAct = 1;
+            cargarDatos(filaSeleccionada);
+            estRegField.setText("A");
+            desactivarFields();
+            
+        }
+    }                                               
+
+    private void btnEliminarCabActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        int filaSeleccionada = tablaCabecera.getSelectedRow();
+        btnActualizarCab.setEnabled(true);
+        if(filaSeleccionada != -1) {
+            comandoActivo = 3;    
+            //Cambio de Flag
+            CarFlaAct = 1;
+            cargarDatos(filaSeleccionada);
+            estRegField.setText("*");            
+            desactivarFields();
+        }
+    }                                              
+
+    private void btnActualizarCabActionPerformed(java.awt.event.ActionEvent evt) {                                                 
+            String codigo = cabCodField.getText();
+            String nombre = trabajadorField.getText();
+            String DNI = DNIField.getText();
+            String rango = String.valueOf(comboRang.getSelectedIndex()+1);
+            String cargo = String.valueOf(comboCarg.getSelectedIndex()+1);
+            String departamento = String.valueOf(comboDep.getSelectedIndex()+1);
+            String estadoRegistro = estRegField.getText();
+            try {
+                PreparedStatement stmt;
+                switch(comandoActivo) {      
+                    case 1 -> { 
+                        stmt = conn.prepareStatement("INSERT INTO R1M_TRABAJADOR (TraCod,TraNom,TraDni,RanCod,CarCod,DepCod,EstRegCod) VALUES (?,?,?,?,?,?,?)");
+                        stmt.setString(1, codigo);
+                        stmt.setString(2, nombre);
+                        stmt.setString(3, DNI);
+                        stmt.setString(4, rango);
+                        stmt.setString(5, cargo);
+                        stmt.setString(6, departamento);
+                        stmt.setString(7, estadoRegistro);
+                        stmt.executeUpdate();
+                        //Agregando trabajadores al crear una charla
+                        
+                    }
+                    default -> {
+                        stmt = conn.prepareStatement("UPDATE R1M_TRABAJADOR SET EstRegCod = ? WHERE AsiCabCod = ?");
+                        stmt.setString(1, estadoRegistro);
+                        stmt.setString(2,codigo);
+                        stmt.executeUpdate();
+                    }
+                }
+                
+                
+            }catch(SQLException e) {
+                System.out.println("Error: "+e);
+            }
+            llenarTablaCabecera();
+            CarFlaAct = 0;
+            desactivarFields();
+            comandoActivo = 0;
+            estRegField.setText("");
+    }                                                
+
+    private void btnCancelarCabActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        estRegField.setText("");
+        cabCodField.setText("");
+        switch(comandoActivo) {
+            case 1 -> btnAdicionarCab.setEnabled(false);
+            case 2 -> btnModificarCab.setEnabled(false);
+            case 3 -> btnEliminarCab.setEnabled(false);
+            case 4 -> btnInactivarCab.setEnabled(false);
+            case 5 -> btnReactivarCab.setEnabled(false);           
+        }
+        if(comandoActivo==0) {
+            btnAdicionarCab.setEnabled(true);
+            btnModificarCab.setEnabled(true);
+            btnEliminarCab.setEnabled(true);
+            btnInactivarCab.setEnabled(true);
+            btnReactivarCab.setEnabled(true);           
+        }
+        desactivarFields();
+        comandoActivo = 0;
+        //Cambiamos el flag a 0
+        CarFlaAct = 0;
+    }                                              
+
+    private void btnModificarCabActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        int filaSeleccionada = tablaCabecera.getSelectedRow();
+        if(filaSeleccionada != -1) {
+            desactivarFields();
+            comandoActivo = 2;    
+            //Cambio de Flag
+            CarFlaAct = 1;
+            cargarDatos(filaSeleccionada);
+            cabCodField.setEditable(true);
+            trabajadorField.setEditable(true);
+            comboCarg.setEditable(true);
+            DNIField.setEditable(true);
+            comboDep.setEditable(true);
+            comboRang.setEditable(true);
+            estRegField.setEditable(true);
+            String estReg = estRegField.getText();
+            
+            if(estReg.equals("I" )||estReg.equals("*"))
+                btnActualizarCab.setEnabled(false);
+            else
+                btnActualizarCab.setEnabled(true);
+            estRegField.setEditable(false);
+        }
+    }                                               
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        System.exit(0);
+    }                                        
+
+    private void cargarComboDe(String campo, String tabla) {
+        try {
+            //Consulta de selección
+            Statement statement = conn.createStatement();
+            String consulta = "SELECT * FROM "+ tabla;
+            ResultSet rs = statement.executeQuery(consulta);
+            JComboBox<String> auxCombo = null;
+
+            switch(tabla) {
+                case "GZZ_CARGO" -> auxCombo=comboCarg;
+                case "GZZ_RANGO" -> auxCombo=comboRang;
+                case "GZZ_DEPARTAMENTO" -> auxCombo=comboDep;              
+            }
+            //Agregando los datos
+            while(rs.next()) {
+                String val = rs.getString(campo);
+                auxCombo.addItem(val);
+            }
+
+        }catch(SQLException e) {
+            System.out.println("Error: "+e);
+        }
+    }
+
+    private void desactivarFields() {
+        cabCodField.setEditable(false);
+        trabajadorField.setEditable(false);
+        DNIField.setEditable(false);
+        comboCarg.setEditable(false);
+        comboDep.setEditable(false);
+        comboRang.setEditable(false);
+        estRegField.setEditable(false);
+    }
+    
+    private void activarFields() {
+        cabCodField.setEditable(true);
+        trabajadorField.setEditable(true);
+        comboCarg.setEditable(true);
+        DNIField.setEditable(true);
+        comboDep.setEditable(true);
+        comboRang.setEditable(true);
+        estRegField.setEditable(true);
+    }
+    
+    
+    private void llenarTablaCabecera() {
+        modelo.setColumnIdentifiers(new Object[]{"Codigo","Nombre","DNI","Rango","Cargo","Departamento","Estado Registro"});
+        modelo.setRowCount(0);
+        try {
+            //Consulta de selección
+            Statement statement = conn.createStatement();
+            String consulta = "SELECT TraCod,TraCod,TraDni,RanCod,CarCod,DepCod,EstRegCod FROM R1M_TRABAJADOR WHERE EstRegCod NOT IN('*')";
+            ResultSet rs = statement.executeQuery(consulta);
+            
+            //Agregando los datos
+            while(rs.next()) {
+                modelo.addRow(new Object[]{rs.getString("TraCod"),rs.getString("TraCod"),rs.getString("TraDni"),rs.getString("RanCod"),rs.getString("CarCod"),rs.getString("DepCod"),rs.getString("EstRegCod")});
+            }
+            //Asigna Modelo a tabla
+            tablaCabecera.setModel(modelo);
+            
+        }catch(SQLException e) {
+            System.out.println("Error: "+e);
+        }        
+    }
+   
+    private void cargarDatos(int fila) {
+        String codigo = (String) modelo.getValueAt(fila, 0);
+        try {
+            Statement statement = conn.createStatement();
+            String consulta = "SELECT * FROM R1M_TRABAJADOR WHERE AsiCabCod="+codigo;
+            ResultSet rs = statement.executeQuery(consulta);
+            while(rs.next()) {
+                cabCodField.setText(codigo);
+                trabajadorField.setText((String) modelo.getValueAt(fila,2));
+                DNIField.setText((String) modelo.getValueAt(fila,3));
+                comboCarg.setSelectedIndex(Integer.parseInt((String) modelo.getValueAt(fila, 4))-1);
+                comboRang.setSelectedIndex(Integer.parseInt((String) modelo.getValueAt(fila, 5))-1);
+                comboDep.setSelectedIndex(Integer.parseInt((String) modelo.getValueAt(fila, 6))-1);
+                estRegField.setText((String) modelo.getValueAt(fila,7));
+            }
+        }catch(SQLException e) {
+            System.out.println("Error: "+e);
+        }
+    }
+    
+    
+    // Variables declaration - do not modify                     
+    private javax.swing.JButton btnActualizarCab;
+    private javax.swing.JButton btnAdicionarCab;
+    private javax.swing.JButton btnCancelarCab;
+    private javax.swing.JButton btnEliminarCab;
+    private javax.swing.JButton btnInactivarCab;
+    private javax.swing.JButton btnModificarCab;
+    private javax.swing.JButton btnReactivarCab;
+    private javax.swing.JButton btnSalir;
+    private javax.swing.JComboBox<String> comboCarg;
+    private javax.swing.JComboBox<String> comboRang;
+    private javax.swing.JComboBox<String> comboDep;
+    private javax.swing.JTextField cabCodField;
+    private javax.swing.JTextField trabajadorField;
+    private javax.swing.JTextField DNIField;
+    private javax.swing.JTextField estRegField;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tablaCabecera;
+    private DefaultTableModel modelo = new DefaultTableModel();
 }
