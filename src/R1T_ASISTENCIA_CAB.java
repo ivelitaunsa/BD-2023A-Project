@@ -1053,7 +1053,7 @@ public class R1T_ASISTENCIA_CAB extends javax.swing.JFrame {
         try {
             //Consulta de selección
             Statement statement = conn.createStatement();
-            String consulta = "SELECT AsiCabCod,AsiDetSec,TraCod,EstAsiCod,EstRegCod FROM R1T_ASISTENCIA_DET WHERE EstRegCod NOT IN('*')";
+            String consulta = "SELECT AsiCabCod,AsiDetSec,TraCod,EstAsiCod,EstRegCod FROM R1T_ASISTENCIA_DET WHERE EstRegCod NOT IN('*') AND AsiCabCod="+cod;
             ResultSet rs = statement.executeQuery(consulta);
             
             //Agregando los datos
