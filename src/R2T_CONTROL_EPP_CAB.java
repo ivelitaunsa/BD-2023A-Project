@@ -920,7 +920,7 @@ public class R2T_CONTROL_EPP_CAB extends javax.swing.JFrame {
     }// </editor-fold>                        
 
     private void btnCabSalActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        System.exit(0);
+        dispose();
     }                                         
 
     private void btnCabAdiActionPerformed(java.awt.event.ActionEvent evt) {                                          

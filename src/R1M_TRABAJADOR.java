@@ -537,7 +537,7 @@ public class R1M_TRABAJADOR extends javax.swing.JFrame {
     }                                               
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        System.exit(0);
+        dispose();
     }                                        
 
     private void cargarComboDe(String campo, String tabla) {
