@@ -18,6 +18,7 @@ public class Driver {
                 //new GZM_EPP().setVisible(true);
                 //new R1M_TRABAJADOR().setVisible(true);
                 //new R1T_ASISTENCIA_CAB().setVisible(true);
+                //new R2T_CONTROL_EPP().setVisible(true);
             }
         });
     }
