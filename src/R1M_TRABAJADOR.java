@@ -469,7 +469,7 @@ public class R1M_TRABAJADOR extends javax.swing.JFrame {
                             
                         }
                         default -> {
-                            stmt = conn.prepareStatement("UPDATE R1M_TRABAJADOR SET EstRegCod = ? WHERE AsiCabCod = ?");
+                            stmt = conn.prepareStatement("UPDATE R1M_TRABAJADOR SET EstRegCod = ? WHERE TraCod = ?");
                             stmt.setString(1, estadoRegistro);
                             stmt.setString(2,codigo);
                             stmt.executeUpdate();
