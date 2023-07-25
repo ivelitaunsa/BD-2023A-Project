@@ -9,7 +9,8 @@ public class Conexion {
     Connection conn;
     public Conexion() {
         // com.mysql.jdbc.Driver -> Deprecated
-        final String driver = "com.mysql.cj.jdbc.Driver";
+        //com.mysql.cj.jdbc.Driver
+        final String driver = "oracle.jdbc.OracleDriver";
         
         //Extrayendo keys de archivo .properties
         Properties props=new Properties();
